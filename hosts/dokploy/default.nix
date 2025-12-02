@@ -12,25 +12,29 @@
   ];
 
   imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
-    ./disk-config.nix
+    ./disko.nix
   ];
 
   boot.loader.grub.enable = true;
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.efiInstallAsRemovable = true;
+  boot.kernelParams = [ "console=ttyS0,115200n8" ];
 
-  networking.hostName = "nix-0";
+  networking.hostName = "dokploy";
+
+  virtualisation.docker.enable = true;
+  environment.systemPackages = with pkgs; [
+    htop
+    btop
+    gdu
+  ];
 
   nix.settings.trusted-users = [ "@wheel" ];
   users.users.dev = {
     isNormalUser = true;
     initialPassword = "dev";
-    description = "dev";
     extraGroups = [
-      "networkmanager"
       "wheel"
+      "docker"
     ];
     packages = with pkgs; [ ];
     openssh.authorizedKeys.keys = [
@@ -38,16 +42,15 @@
     ];
   };
 
-  system.activationScripts.expire-dev-password = ''
-    FLAG_FILE="/var/lib/dev-password-changed"
-    if id -u dev > /dev/null 2>&1 && [ ! -f "$FLAG_FILE" ]; then
-      ${pkgs.shadow}/bin/passwd -e dev || true
-      touch "$FLAG_FILE"
-    fi
-  '';
+  # system.activationScripts.expire-dev-password = ''
+  #   FLAG_FILE="/var/lib/dev-password-changed"
+  #   if id -u dev > /dev/null 2>&1 && [ ! -f "$FLAG_FILE" ]; then
+  #     ${pkgs.shadow}/bin/passwd -e dev || true
+  #     touch "$FLAG_FILE"
+  #   fi
+  # '';
 
-  # enable vscode ssh
-  programs.nix-ld.enable = true;
+  # programs.nix-ld.enable = true;
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = false;

@@ -28,21 +28,21 @@
         modules = [ ./hosts/nix-deploy ];
       };
 
-      nixosConfigurations.nix-0 = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.dokploy = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           disko.nixosModules.disko
-          ./hosts/nix-0
+          ./hosts/dokploy
         ];
       };
 
-      deploy.nodes.nix-0 = {
-        hostname = "192.168.1.76";
+      deploy.nodes.dokploy = {
+        hostname = "192.168.1.70";
         sshUser = "dev";
         user = "root";
         interactiveSudo = true;
         profiles.system = {
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nix-0;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.dokploy;
         };
       };
     };

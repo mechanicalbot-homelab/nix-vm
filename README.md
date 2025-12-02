@@ -2,14 +2,9 @@
 
 This repository contains NixOS flake configurations for managing multiple hosts in a homelab environment.
 
-## Hosts
+## Bootstrap <hostname>
 
-- **nix-0**: New host configuration with disk management via disko
-- **nix-deploy**: Deployment/management host configuration
-
-## Bootstrap nix-0
-
-There are two ways to bootstrap the `nix-0` host:
+There are two ways to bootstrap the new host:
 
 ### Method 1: Remote Installation (Recommended)
 
@@ -24,7 +19,7 @@ ip a    # Note the IP address
 **On the source machine:**
 ```sh
 nix run github:nix-community/nixos-anywhere -- \
-  --flake .#nix-0 \
+  --flake .#<hostname> \
   --target-host nixos@<TARGET_IP>
 ```
 
@@ -39,10 +34,10 @@ Boot the target machine from a livecd and run:
 sudo nix --experimental-features "nix-command flakes" run \
   github:nix-community/disko/latest -- \
   --mode destroy,format,mount \
-  --flake github:mechanicalbot-homelab/nix#nix-0
+  --flake github:mechanicalbot-homelab/nix#<hostname>
 
 # Install NixOS
-sudo nixos-install --flake github:mechanicalbot-homelab/nix#nix-0
+sudo nixos-install --flake github:mechanicalbot-homelab/nix#<hostname>
 
 # After reboot, clone the repo and link the flake
 git clone <repo-url> /path/to/repo
