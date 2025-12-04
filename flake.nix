@@ -10,6 +10,10 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    wsl = {
+      url = "github:nix-community/NixOS-WSL/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -18,6 +22,7 @@
       nixpkgs,
       disko,
       deploy-rs,
+      wsl,
       ...
     }:
     {
@@ -36,6 +41,14 @@
         modules = [
           disko.nixosModules.disko
           ./hosts/dokploy
+        ];
+      };
+
+      nixosConfigurations.wsl = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          wsl.nixosModules.default
+          ./hosts/wsl
         ];
       };
 
