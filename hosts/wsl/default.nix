@@ -14,6 +14,11 @@
   networking.hostName = "wsl";
   wsl.enable = true;
   wsl.defaultUser = "dev";
+  users.users.dev = {
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILoGbJn//BJtnXEeNQ9mmHZ8KXcJKmB73VGsQ6PR+M7r"
+    ];
+  };
   wsl.interop.register = true;
 
   environment.systemPackages = with pkgs; [
@@ -30,6 +35,10 @@
   };
 
   programs.nix-ld.enable = true;
+
+  services.openssh = {
+    enable = true;
+  };
 
   systemd.user.services.wsl2-ssh-agent = {
     description = "WSL2 SSH Agent Bridge";
