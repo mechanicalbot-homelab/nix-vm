@@ -4,22 +4,31 @@
   modulesPath,
   ...
 }:
+let
+  username = "dev";
+in
 {
   system.stateVersion = "25.11";
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
+
+  imports = [
+    ../../modules/shared
+    ../../modules/wsl
   ];
 
+  x.wsl.enable = true;
+  x.wsl.username = username;
+
   networking.hostName = "wsl";
-  wsl.enable = true;
-  wsl.defaultUser = "dev";
-  users.users.dev = {
+
+  users.users.${username} = {
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILoGbJn//BJtnXEeNQ9mmHZ8KXcJKmB73VGsQ6PR+M7r"
     ];
   };
-  wsl.interop.register = true;
+
+  services.openssh = {
+    enable = true;
+  };
 
   environment.systemPackages = with pkgs; [
     git
@@ -36,8 +45,6 @@
   };
 
   programs = {
-    nix-ld.enable = true;
-
     lazygit = {
       enable = true;
       settings = {
@@ -62,23 +69,4 @@
       };
     };
   };
-
-  services.openssh = {
-    enable = true;
-  };
-
-  systemd.user.services.wsl2-ssh-agent = {
-    description = "WSL2 SSH Agent Bridge";
-    after = [ "network.target" ];
-    wantedBy = [ "default.target" ];
-    unitConfig = {
-      ConditionUser = "!root";
-    };
-    serviceConfig = {
-      ExecStart = "${pkgs.wsl2-ssh-agent}/bin/wsl2-ssh-agent --verbose --foreground --powershell-path=/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe --socket=%t/wsl2-ssh-agent.sock";
-      Restart = "on-failure";
-    };
-  };
-
-  environment.variables.SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/wsl2-ssh-agent.sock";
 }

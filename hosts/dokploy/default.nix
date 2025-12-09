@@ -6,14 +6,11 @@
 }:
 {
   system.stateVersion = "25.11";
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
 
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disko.nix
+    ../../modules/shared
   ];
 
   boot.loader.grub.enable = true;
