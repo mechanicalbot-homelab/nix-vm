@@ -35,7 +35,33 @@
     deploy = "${pkgs.deploy-rs}/bin/deploy";
   };
 
-  programs.nix-ld.enable = true;
+  programs = {
+    nix-ld.enable = true;
+
+    lazygit = {
+      enable = true;
+      settings = {
+        gui = {
+          splitDiff = "always";
+        };
+        git = {
+          pagers = [
+            {
+              pager = "${pkgs.ydiff}/bin/ydiff -p cat -s --wrap --width={{columnWidth}}";
+              colorArg = "never";
+              externalDiffCommand = "${pkgs.difftastic}/bin/difft --color=always";
+            }
+            {
+              pager = "${pkgs.diff-so-fancy}/bin/diff-so-fancy";
+            }
+            {
+              pager = "${pkgs.delta}/bin/delta --dark --paging=never";
+            }
+          ];
+        };
+      };
+    };
+  };
 
   services.openssh = {
     enable = true;
