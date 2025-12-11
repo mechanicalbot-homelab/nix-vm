@@ -11,6 +11,7 @@
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disko.nix
     ../../modules/shared
+    ../../modules/shared/wireguard.nix
   ];
 
   boot.loader.grub.enable = true;
@@ -25,6 +26,7 @@
     btop
     gdu
     duf
+    lazydocker
   ];
 
   nix.settings.trusted-users = [ "@wheel" ];
